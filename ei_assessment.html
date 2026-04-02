@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EQ Spectrum — Workplace EI Assessment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0a0d12;
+    --surface: #111520;
+    --surface2: #161c2a;
+    --border: rgba(255,255,255,0.07);
+    --accent1: #4f9cf9; /* blue */
+    --accent2: #a78bfa; /* violet */
+    --accent3: #34d399; /* emerald */
+    --accent4: #fbbf24; /* amber */
+    --accent5: #f87171; /* rose */
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --dim: #3a4155;
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── BACKGROUND ── */
+  .bg-orbs {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    overflow: hidden;
+  }
+  .orb {
+    position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.18;
+  }
+  .orb1 { width: 600px; height: 600px; background: var(--accent1); top: -200px; left: -150px; }
+  .orb2 { width: 500px; height: 500px; background: var(--accent2); bottom: -100px; right: -100px; }
+  .orb3 { width: 300px; height: 300px; background: var(--accent3); top: 40%; left: 50%; transform: translateX(-50%); }
+
+  /* ── LAYOUT ── */
+  #app {
+    position: relative; z-index: 1;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+  }
+
+  /* ── LANDING ── */
+  #landing {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+  }
+  .logo-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(79,156,249,0.1); border: 1px solid rgba(79,156,249,0.25);
+    border-radius: 100px; padding: 6px 16px 6px 10px;
+    font-size: 12px; font-weight: 500; color: var(--accent1);
+    margin-bottom: 32px; letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .logo-dot { width: 8px; height: 8px; background: var(--accent1); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:0.5; transform:scale(1.3); } }
+
+  .hero-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(42px, 7vw, 80px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 20px;
+  }
+  .hero-title .grad {
+    background: linear-gradient(135deg, var(--accent1) 0%, var(--accent2) 50%, var(--accent3) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero-sub {
+    font-size: 18px; color: var(--muted); max-width: 560px; line-height: 1.6;
+    margin-bottom: 48px; font-weight: 300;
+  }
+
+  .dim-grid {
+    display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+    max-width: 700px; margin-bottom: 48px;
+  }
+  .dim-pill {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 100px; padding: 8px 16px;
+    font-size: 13px; font-weight: 500;
+  }
+  .dim-pill .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  .stats-row {
+    display: flex; gap: 32px; margin-bottom: 48px; flex-wrap: wrap; justify-content: center;
+  }
+  .stat { text-align: center; }
+  .stat-num { font-family: 'Syne', sans-serif; font-size: 32px; font-weight: 800; color: var(--text); }
+  .stat-lbl { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+  .cta-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    color: #fff; border: none; border-radius: 100px;
+    padding: 16px 40px; font-family: 'Syne', sans-serif;
+    font-size: 16px; font-weight: 700; cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 8px 32px rgba(79,156,249,0.3);
+  }
+  .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(79,156,249,0.45); }
+  .cta-btn svg { width: 18px; height: 18px; }
+
+  /* ── ASSESSMENT ── */
+  #assessment { display: none; padding: 20px; max-width: 900px; margin: 0 auto; width: 100%; }
+
+  .progress-header {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(10,13,18,0.9); backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px; margin: 0 -20px 32px;
+  }
+  .progress-meta {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px;
+  }
+  .progress-label { font-size: 13px; color: var(--muted); }
+  .progress-frac { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--text); }
+  .progress-track {
+    height: 4px; background: var(--dim); border-radius: 4px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; border-radius: 4px;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2));
+    transition: width 0.4s ease;
+  }
+
+  .section-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 24px; padding: 20px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .section-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .section-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; }
+  .section-desc { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+  .question-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+  .question-card.answered { border-color: rgba(79,156,249,0.2); }
+  .question-num { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; }
+  .question-text { font-size: 15px; line-height: 1.6; font-weight: 400; margin-bottom: 20px; }
+
+  .q-type-tag {
+    display: inline-block;
+    background: rgba(79,156,249,0.1); color: var(--accent1);
+    border: 1px solid rgba(79,156,249,0.2);
+    border-radius: 100px; padding: 1px 8px;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .q-type-tag.tag-Performance { background: rgba(52,211,153,0.1); color: var(--accent3); border-color: rgba(52,211,153,0.25); }
+  .q-type-tag.tag-Teamwork    { background: rgba(251,191,36,0.1); color: var(--accent4); border-color: rgba(251,191,36,0.25); }
+  .q-type-tag.tag-Leadership  { background: rgba(167,139,250,0.1); color: var(--accent2); border-color: rgba(167,139,250,0.25); }
+  .q-type-tag.tag-Conflict    { background: rgba(248,113,113,0.1); color: var(--accent5); border-color: rgba(248,113,113,0.25); }
+
+  .mcq-options { display: flex; flex-direction: column; gap: 10px; }
+
+  .mcq-btn {
+    display: flex; align-items: flex-start; gap: 12px;
+    background: var(--surface2); border: 1.5px solid var(--dim);
+    border-radius: var(--radius-sm); padding: 14px 16px;
+    cursor: pointer; text-align: left; transition: all 0.18s;
+    position: relative; width: 100%;
+  }
+  .mcq-btn:not(:disabled):hover { border-color: var(--accent1); background: rgba(79,156,249,0.06); }
+  .mcq-btn:disabled { cursor: default; }
+  .mcq-btn.faded { opacity: 0.38; }
+
+  .mcq-btn.selected { border-color: var(--accent1); }
+  .mcq-btn.selected.correct { border-color: var(--accent3); background: rgba(52,211,153,0.07); }
+  .mcq-btn.selected.partial { border-color: var(--accent4); background: rgba(251,191,36,0.07); }
+  .mcq-btn.selected.low    { border-color: #f97316; background: rgba(249,115,22,0.07); }
+  .mcq-btn.selected.wrong  { border-color: var(--accent5); background: rgba(248,113,113,0.07); }
+
+  .mcq-letter {
+    width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+    background: var(--dim); color: var(--muted);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
+    transition: all 0.18s;
+  }
+  .mcq-btn.selected .mcq-letter { background: var(--accent1); color: #fff; }
+  .mcq-btn.selected.correct .mcq-letter { background: var(--accent3); color: #0a0d12; }
+  .mcq-btn.selected.partial .mcq-letter { background: var(--accent4); color: #0a0d12; }
+  .mcq-btn.selected.low    .mcq-letter { background: #f97316; color: #fff; }
+  .mcq-btn.selected.wrong  .mcq-letter { background: var(--accent5); color: #fff; }
+
+  .mcq-content { flex: 1; }
+  .mcq-label { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .mcq-feedback {
+    margin-top: 8px; font-size: 12px; line-height: 1.5;
+    color: var(--muted); border-top: 1px solid var(--border); padding-top: 8px;
+  }
+  .mcq-btn.selected.correct  .mcq-feedback { color: var(--accent3); }
+  .mcq-btn.selected.partial  .mcq-feedback { color: var(--accent4); }
+  .mcq-btn.selected.low      .mcq-feedback { color: #f97316; }
+  .mcq-btn.selected.wrong    .mcq-feedback { color: var(--accent5); }
+
+  .mcq-score-badge {
+    position: absolute; top: 12px; right: 14px;
+    font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700;
+    padding: 3px 8px; border-radius: 100px;
+  }
+  .score-4 { background: rgba(52,211,153,0.15); color: var(--accent3); }
+  .score-3 { background: rgba(251,191,36,0.15); color: var(--accent4); }
+  .score-2 { background: rgba(249,115,22,0.15); color: #f97316; }
+  .score-1 { background: rgba(248,113,113,0.15); color: var(--accent5); }
+
+  .nav-row {
+    display: flex; gap: 12px; margin-top: 32px; padding-bottom: 40px;
+  }
+  .nav-btn {
+    flex: 1; padding: 14px; border-radius: var(--radius-sm);
+    font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: all 0.18s; border: none;
+  }
+  .nav-btn.back {
+    background: var(--surface); border: 1px solid var(--border); color: var(--muted);
+  }
+  .nav-btn.back:hover { border-color: var(--accent1); color: var(--text); }
+  .nav-btn.next {
+    background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    color: #fff; box-shadow: 0 4px 20px rgba(79,156,249,0.25);
+  }
+  .nav-btn.next:hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(79,156,249,0.4); }
+  .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+
+  /* ── RESULTS ── */
+  #results { display: none; padding: 20px; max-width: 900px; margin: 0 auto; width: 100%; }
+
+  .results-hero {
+    text-align: center; padding: 48px 20px 40px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); margin-bottom: 28px;
+  }
+  .score-ring {
+    width: 140px; height: 140px; margin: 0 auto 20px;
+    position: relative;
+  }
+  .score-ring svg { transform: rotate(-90deg); }
+  .score-ring .score-num {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif;
+  }
+  .score-ring .big { font-size: 36px; font-weight: 800; }
+  .score-ring .of { font-size: 12px; color: var(--muted); }
+
+  .tier-badge {
+    display: inline-block; padding: 6px 20px;
+    border-radius: 100px; font-family: 'Syne', sans-serif;
+    font-size: 14px; font-weight: 700;
+    margin-bottom: 12px; letter-spacing: 0.04em;
+  }
+  .tier-high { background: rgba(52,211,153,0.15); color: var(--accent3); border: 1px solid rgba(52,211,153,0.3); }
+  .tier-moderate { background: rgba(251,191,36,0.12); color: var(--accent4); border: 1px solid rgba(251,191,36,0.3); }
+  .tier-low { background: rgba(248,113,113,0.12); color: var(--accent5); border: 1px solid rgba(248,113,113,0.3); }
+
+  .results-title { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+  .results-tagline { color: var(--muted); font-size: 15px; line-height: 1.6; max-width: 500px; margin: 0 auto; }
+
+  /* DIMENSION BARS */
+  .dim-section { margin-bottom: 28px; }
+  .dim-section-title {
+    font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700;
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .dim-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+  .dim-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 18px 20px;
+  }
+  .dim-card-head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 12px;
+  }
+  .dim-card-name { font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
+  .dim-card-score { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; }
+  .dim-bar-bg {
+    height: 6px; background: var(--dim); border-radius: 6px; overflow: hidden;
+  }
+  .dim-bar-fill {
+    height: 100%; border-radius: 6px;
+    transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .dim-card-max { font-size: 11px; color: var(--muted); margin-top: 6px; }
+
+  /* RADAR */
+  .radar-wrap {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 28px;
+    margin-bottom: 28px; text-align: center;
+  }
+  .radar-wrap h3 { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 20px; }
+  #radarCanvas { max-width: 340px; margin: 0 auto; display: block; }
+
+  /* INTERPRETATION */
+  .interp-section {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 28px;
+    margin-bottom: 28px;
+  }
+  .interp-section h3 { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 20px; }
+
+  .interp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .interp-card {
+    background: var(--surface2); border-radius: var(--radius-sm);
+    padding: 16px; border-left: 3px solid;
+  }
+  .interp-card h4 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 8px; }
+  .interp-card p { font-size: 13px; line-height: 1.6; }
+
+  .action-items {
+    margin-top: 20px; background: var(--surface2); border-radius: var(--radius-sm); padding: 20px;
+  }
+  .action-items h4 { font-size: 13px; font-weight: 600; margin-bottom: 12px; color: var(--accent1); }
+  .action-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .action-list li {
+    font-size: 13px; line-height: 1.5;
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .action-list li::before {
+    content: '→'; color: var(--accent1); flex-shrink: 0; margin-top: 1px;
+  }
+
+  .scoring-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 28px;
+    margin-bottom: 28px;
+  }
+  .scoring-box h3 { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 16px; }
+  .scoring-tiers { display: flex; gap: 12px; flex-wrap: wrap; }
+  .tier-card {
+    flex: 1; min-width: 160px;
+    border-radius: var(--radius-sm); padding: 16px; border: 1px solid;
+  }
+  .tier-card h4 { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .tier-card .range { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
+  .tier-card p { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .tier-card.high { background: rgba(52,211,153,0.05); border-color: rgba(52,211,153,0.2); }
+  .tier-card.high .range, .tier-card.high h4 { color: var(--accent3); }
+  .tier-card.moderate { background: rgba(251,191,36,0.05); border-color: rgba(251,191,36,0.2); }
+  .tier-card.moderate .range, .tier-card.moderate h4 { color: var(--accent4); }
+  .tier-card.low { background: rgba(248,113,113,0.05); border-color: rgba(248,113,113,0.2); }
+  .tier-card.low .range, .tier-card.low h4 { color: var(--accent5); }
+
+  .retake-btn {
+    display: block; width: 100%; padding: 14px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); color: var(--muted);
+    font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: all 0.18s; text-align: center;
+    margin-bottom: 40px;
+  }
+  .retake-btn:hover { border-color: var(--accent1); color: var(--text); }
+
+  /* ── UTILITY ── */
+  .hidden { display: none !important; }
+  .fade-in { animation: fadeIn 0.5s ease both; }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform:none; } }
+
+  @media (max-width: 600px) {
+    .stats-row { gap: 20px; }
+    .likert-btn .lbl { display: none; }
+    .dim-cards { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+<div id="app">
+
+<!-- ════════════ LANDING ════════════ -->
+<section id="landing">
+  <div class="logo-badge"><div class="logo-dot"></div>EQ Spectrum · HUM1002</div>
+  <h1 class="hero-title">Workplace<br><span class="grad">Emotional Intelligence</span><br>Assessment</h1>
+  <p class="hero-sub">A research-grounded framework measuring your EI across 5 dimensions with 25 behaviorally-anchored scenario questions built for the modern workplace.</p>
+
+  <div class="dim-grid">
+    <div class="dim-pill"><div class="dot" style="background:#4f9cf9"></div>Self-Awareness</div>
+    <div class="dim-pill"><div class="dot" style="background:#a78bfa"></div>Self-Regulation</div>
+    <div class="dim-pill"><div class="dot" style="background:#34d399"></div>Motivation</div>
+    <div class="dim-pill"><div class="dot" style="background:#fbbf24"></div>Empathy</div>
+    <div class="dim-pill"><div class="dot" style="background:#f87171"></div>Social Skills</div>
+    <div class="dim-pill"><div class="dot" style="background:#818cf8"></div>EI–Effectiveness</div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat"><div class="stat-num">35</div><div class="stat-lbl">Questions</div></div>
+    <div class="stat"><div class="stat-num">6</div><div class="stat-lbl">Dimensions</div></div>
+    <div class="stat"><div class="stat-num">~12</div><div class="stat-lbl">Minutes</div></div>
+    <div class="stat"><div class="stat-num">3</div><div class="stat-lbl">EI Tiers</div></div>
+  </div>
+
+  <button class="cta-btn" onclick="startAssessment()">
+    Begin Assessment
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+  </button>
+</section>
+
+<!-- ════════════ ASSESSMENT ════════════ -->
+<section id="assessment">
+  <div class="progress-header">
+    <div class="progress-meta">
+      <span class="progress-label" id="progressLabel">Section 1 of 6</span>
+      <span class="progress-frac" id="progressFrac">0 / 35</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  </div>
+  <div id="questionContainer"></div>
+  <div class="nav-row">
+    <button class="nav-btn back" id="backBtn" onclick="goBack()">← Back</button>
+    <button class="nav-btn next" id="nextBtn" onclick="goNext()">Next →</button>
+  </div>
+</section>
+
+<!-- ════════════ RESULTS ════════════ -->
+<section id="results">
+  <div class="results-hero fade-in">
+    <div class="score-ring">
+      <svg width="140" height="140" viewBox="0 0 140 140">
+        <circle cx="70" cy="70" r="58" fill="none" stroke="var(--dim)" stroke-width="10"/>
+        <circle id="scoreArc" cx="70" cy="70" r="58" fill="none" stroke-width="10"
+          stroke-linecap="round" stroke-dasharray="364.4" stroke-dashoffset="364.4"
+          style="stroke:url(#arcGrad); transition:stroke-dashoffset 1.4s cubic-bezier(0.16,1,0.3,1)"/>
+        <defs>
+          <linearGradient id="arcGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="var(--accent1)"/>
+            <stop offset="100%" stop-color="var(--accent2)"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="score-num">
+        <span class="big" id="totalScoreNum">—</span>
+        <span class="of">/ 140</span>
+      </div>
+    </div>
+    <div class="tier-badge" id="tierBadge">—</div>
+    <div class="results-title" id="resultsTitle">Calculating...</div>
+    <div class="results-tagline" id="resultsTagline"></div>
+  </div>
+
+  <!-- DIMENSION BARS -->
+  <div class="dim-section fade-in" style="animation-delay:0.1s">
+    <div class="dim-section-title">📊 Score Breakdown by Dimension</div>
+    <div class="dim-cards" id="dimCards"></div>
+  </div>
+
+  <!-- RADAR -->
+  <div class="radar-wrap fade-in" style="animation-delay:0.2s">
+    <h3>🕸 EI Radar Profile</h3>
+    <canvas id="radarCanvas" width="340" height="320"></canvas>
+  </div>
+
+  <!-- INTERPRETATION -->
+  <div class="interp-section fade-in" style="animation-delay:0.3s">
+    <h3>🧭 Interpretation & Recommendations</h3>
+    <div class="interp-grid" id="interpGrid"></div>
+    <div class="action-items" id="actionItems"></div>
+  </div>
+
+  <!-- SCORING METHOD -->
+  <div class="scoring-box fade-in" style="animation-delay:0.4s">
+    <h3>📐 Scoring Method</h3>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6">
+      Each of the 35 questions is a behavioural or situational scenario with 4 options scored 1–4 based on EI alignment (4 = most EI-aligned, 1 = least). The 5 core dimensions (Q1–25) are worth max 20 each. The 10 EI-Effectiveness questions (Q26–35) are worth max 40. <strong style="color:var(--text)">Total max = 140.</strong>
+    </p>
+    <div class="scoring-tiers">
+      <div class="tier-card high">
+        <h4>High EI</h4>
+        <div class="range">112–140</div>
+        <p>Consistently high EI across all dimensions. Ready for leadership roles and autonomous cross-functional work.</p>
+      </div>
+      <div class="tier-card moderate">
+        <h4>Moderate EI</h4>
+        <div class="range">77–111</div>
+        <p>Solid foundation with identifiable growth areas. Targeted coaching in weak dimensions is recommended.</p>
+      </div>
+      <div class="tier-card low">
+        <h4>Developing EI</h4>
+        <div class="range">35–76</div>
+        <p>Significant development needed. Structured EI training, mentoring, and peer feedback programs advised.</p>
+      </div>
+    </div>
+  </div>
+
+  <button class="retake-btn" onclick="retake()">↩ Retake Assessment</button>
+</section>
+
+</div><!-- #app -->
+
+<script>
+/* ══════════════════════════════════════════
+   DATA — 25 BEHAVIOURAL & SITUATIONAL MCQ QUESTIONS
+   Each option: { label, score (1–4), note }
+   Score 4 = highest EI alignment, 1 = lowest
+══════════════════════════════════════════ */
+const QUESTIONS = [
+
+  // ── SELF-AWARENESS (Q1–5) ──
+  {
+    id:1, dim:'sa', type:'Behavioral',
+    text:"Tell me about a time you received difficult constructive feedback. How did you react, and how did you maintain genuine openness to it?",
+    options:[
+      { label:"I thanked them, reflected privately, and asked follow-up questions to understand fully — then made a concrete change.", score:4, note:"Excellent — shows openness, curiosity, and actionable self-awareness." },
+      { label:"I listened but felt defensive internally; I accepted it outwardly without really acting on it.", score:2, note:"Partial self-awareness — recognizes emotion but doesn't channel it productively." },
+      { label:"I disagreed with the feedback in the moment and explained why I was right.", score:1, note:"Low self-awareness — defensive reaction blocks growth." },
+      { label:"I appreciated the feedback but needed a few days before I could process it calmly and respond.", score:3, note:"Good — acknowledges emotional delay but ultimately reflects and adapts." }
+    ]
+  },
+  {
+    id:2, dim:'sa', type:'Situational',
+    text:"You are preparing to address your team during a period of intense organizational change. Knowing that employees prioritize leaders who acknowledge feelings, how would you manage your own emotional baseline before speaking?",
+    options:[
+      { label:"I would take time to journal my own anxieties about the change so I can name them honestly — and separate my feelings from the team message.", score:4, note:"Outstanding — proactive emotional inventory before leading others." },
+      { label:"I would focus only on the facts of the message and not think about emotions before the meeting.", score:1, note:"Avoidance of emotional preparation leads to disconnected leadership." },
+      { label:"I would do a brief breathing exercise and remind myself to stay neutral and professional.", score:3, note:"Good regulation practice, though deeper self-reflection would be more impactful." },
+      { label:"I would ask a trusted colleague to check my tone before presenting.", score:2, note:"External check is helpful but reactive — inner awareness should come first." }
+    ]
+  },
+  {
+    id:3, dim:'sa', type:'Behavioral',
+    text:"Describe a situation where you realized your communication style was negatively impacting your team. How did you recognize this?",
+    options:[
+      { label:"I noticed body language shifts and disengagement during my updates; I asked the team directly and then changed my approach based on their feedback.", score:4, note:"Excellent — uses internal observation and external feedback for self-correction." },
+      { label:"A manager told me my emails were too blunt. I hadn't noticed until then.", score:2, note:"Self-awareness was prompted externally — some awareness but reactive rather than proactive." },
+      { label:"I've never received feedback about my communication style.", score:1, note:"Indicates low self-awareness or avoidance of feedback loops." },
+      { label:"I realized it after a project failed and I reflected on what I could have done differently.", score:3, note:"Post-event reflection is valuable; real-time awareness would be stronger." }
+    ]
+  },
+  {
+    id:4, dim:'sa', type:'Situational',
+    text:"A project you championed has failed, and you feel defensive. How do you ensure you demonstrate self-awareness and accountability rather than deflecting blame?",
+    options:[
+      { label:"I name my own role in the failure first — publicly acknowledging what I could have done differently before discussing external factors.", score:4, note:"Exemplary self-awareness and psychological courage." },
+      { label:"I present a balanced analysis of all contributing factors including mine, but start with the external blockers.", score:3, note:"Good, though leading with personal accountability is more self-aware." },
+      { label:"I acknowledge the failure briefly but quickly pivot to lessons learned to move the team forward.", score:2, note:"Functional but may feel dismissive — skips the self-awareness piece." },
+      { label:"I explain the circumstances that led to the failure so the team understands it wasn't all my fault.", score:1, note:"Defensive framing signals low self-awareness and accountability." }
+    ]
+  },
+  {
+    id:5, dim:'sa', type:'Behavioral',
+    text:"Tell me about a time when your personal values conflicted with a company directive. How did you handle your internal reaction while remaining professional?",
+    options:[
+      { label:"I named the conflict clearly to myself, voiced my concern through the right channel, and once heard — committed professionally to the direction.", score:4, note:"High integrity and self-awareness — honours both values and accountability." },
+      { label:"I stayed quiet, felt uncomfortable, but executed the directive without raising the issue.", score:2, note:"Suppressed self-awareness — compliance without authentic engagement." },
+      { label:"I raised my concern loudly to peers before speaking to my manager — it created some tension.", score:1, note:"Low regulation of the internal reaction — values are clear but response is unstrategic." },
+      { label:"I flagged my concern to my manager privately and then professionally aligned with the decision.", score:3, note:"Good — professional and appropriate; slightly less vulnerable than naming the emotion explicitly." }
+    ]
+  },
+
+  // ── SELF-REGULATION (Q6–10) ──
+  {
+    id:6, dim:'sr', type:'Situational',
+    text:"You must deliver difficult news, such as a layoff. How do you regulate your own discomfort and stress to ensure you break the news without breaking the employee's self-worth?",
+    options:[
+      { label:"I prepare emotionally beforehand, acknowledge my own discomfort privately, and focus on delivering with dignity — leading with the person's value before the decision.", score:4, note:"Excellent — regulated, compassionate, and employee-centered delivery." },
+      { label:"I keep it brief and factual to avoid making it more emotional than it needs to be.", score:1, note:"Efficiency over empathy — low self-regulation applied to protecting the other person." },
+      { label:"I follow an HR script carefully to stay professional and avoid saying the wrong thing.", score:2, note:"Procedurally safe but emotionally flat — regulation without genuine presence." },
+      { label:"I acknowledge it's a hard conversation, state the decision clearly, validate the person's contributions, and offer support resources.", score:3, note:"Solid approach — empathetic and structured; slight edge to the option that includes internal prep." }
+    ]
+  },
+  {
+    id:7, dim:'sr', type:'Behavioral',
+    text:"Describe a time you faced a severe professional setback — such as an unexpected job loss with no immediate backup plan. How did you manage your frustration and anxiety to keep moving forward?",
+    options:[
+      { label:"I gave myself a defined period to process the shock, then created a structured plan — treating the search like a project with daily goals.", score:4, note:"Strong self-regulation — acknowledges the emotion and channels it into productive action." },
+      { label:"I immediately started applying for everything to stay busy and avoid dwelling on the setback.", score:2, note:"Avoidance disguised as action — productivity without emotional processing." },
+      { label:"I spoke to a mentor, vented healthily, then reframed the setback as a redirection.", score:3, note:"Good — uses support, healthy expression, and reframing." },
+      { label:"I struggled significantly and it took months before I felt motivated to move forward.", score:1, note:"Demonstrates the emotional impact but shows limited self-regulation strategies." }
+    ]
+  },
+  {
+    id:8, dim:'sr', type:'Situational',
+    text:"You receive a highly emotional and critical email from a colleague. How do you pause and regulate your emotions to respond thoughtfully instead of reactively?",
+    options:[
+      { label:"I step away, write a draft response I never send, then wait 24 hours before crafting a considered reply that addresses the issue without matching the emotional tone.", score:4, note:"Classic self-regulation — creates space before responding, separates emotion from content." },
+      { label:"I reply immediately to clear the air and not let tension fester.", score:1, note:"Reactive response — likely escalates the situation." },
+      { label:"I forward it to my manager first to get advice before replying.", score:2, note:"Caution is good but avoids personal regulation — relies on external management." },
+      { label:"I wait a few hours to cool down, then respond professionally addressing the key points.", score:3, note:"Good — time delay helps; slightly less reflective than drafting and deliberate framing." }
+    ]
+  },
+  {
+    id:9, dim:'sr', type:'Behavioral',
+    text:"Tell me about a time your team was under immense pressure. How did you maintain a positive outlook and stay even-tempered?",
+    options:[
+      { label:"I created a visible 'progress wall' to celebrate small wins daily, held brief morale check-ins, and modelled calm by regulating my own venting outside team spaces.", score:4, note:"Leader-level self-regulation that actively protects team climate." },
+      { label:"I worked longer hours to lead by example and show I was committed to getting through it.", score:2, note:"Dedication is visible but long hours signal stress, not calm — may increase team anxiety." },
+      { label:"I told the team to stay focused and not panic — pressure is part of the job.", score:1, note:"Dismisses emotional reality — low empathy and self-regulation as a leader." },
+      { label:"I stayed calm in meetings, managed my stress privately, and checked in one-on-one with team members showing signs of burnout.", score:3, note:"Good — composed and empathetic; slightly less proactive structurally than the best answer." }
+    ]
+  },
+  {
+    id:10, dim:'sr', type:'Situational',
+    text:"Your company is going through rapid expansion, leading to operational chaos. How do you manage your own stress to avoid becoming overly critical or negative?",
+    options:[
+      { label:"I maintain a daily ritual (morning walk, brief journaling) that separates work stress from my identity — and I set explicit 'no criticism' rules for myself in team meetings during crises.", score:4, note:"Structured self-regulation with intentional behavioral guardrails." },
+      { label:"I focus on what I can control and try not to think about the chaos around me.", score:2, note:"Avoidance-based coping — somewhat effective short term, unsustainable." },
+      { label:"I use the chaos as motivation — pressure helps me focus.", score:1, note:"Possible for some, but often masks dysregulation behind productivity." },
+      { label:"I flag when I'm overwhelmed to my manager so expectations can be recalibrated.", score:3, note:"Good self-awareness and communication; internal regulation strategies would strengthen this." }
+    ]
+  },
+
+  // ── MOTIVATION (Q11–15) ──
+  {
+    id:11, dim:'mo', type:'Situational',
+    text:"Your team is feeling burnt out and engagement is dropping. How do you inspire them by tying their everyday work to a meaningful purpose?",
+    options:[
+      { label:"I run a team session to co-create a 'purpose map' — connecting each person's daily tasks to the company's mission and their own personal 'why'.", score:4, note:"Excellent — participatory, intrinsic, and purposeful motivation strategy." },
+      { label:"I offer additional incentives like bonuses or flexible hours to re-engage the team.", score:2, note:"Extrinsic motivation is a short-term fix — doesn't address purpose deficit." },
+      { label:"I share inspiring customer success stories that show the real impact of the team's work.", score:3, note:"Good — connects work to impact; stronger if personalized to individual motivators." },
+      { label:"I remind the team about the company's vision and ask them to push through the challenging period.", score:1, note:"Low empathy — motivational framing without emotional acknowledgment." }
+    ]
+  },
+  {
+    id:12, dim:'mo', type:'Behavioral',
+    text:"Tell me about a time you motivated an employee by aligning their personal values with corporate goals.",
+    options:[
+      { label:"I learned through 1:1s that a team member valued sustainability. I connected their work on our supply chain project to the company's ESG goals — their engagement transformed.", score:4, note:"Ideal — deeply personal alignment creates intrinsic motivation." },
+      { label:"I praised the employee publicly at a team meeting, which boosted their confidence and commitment.", score:2, note:"Recognition is motivating but doesn't demonstrate values-alignment specifically." },
+      { label:"I shared our company OKRs and explained how their role contributed to the bigger picture.", score:3, note:"Good alignment of individual to corporate goals; lacks the personal values dimension." },
+      { label:"I gave the employee a stretch project in an area they had expressed interest in.", score:3, note:"Good — acts on expressed interest; more powerful when explicitly tied to their stated values." }
+    ]
+  },
+  {
+    id:13, dim:'mo', type:'Situational',
+    text:"You are onboarding a new generation of workers who say 'coach me, don't command me'. How do you design their onboarding to reflect this?",
+    options:[
+      { label:"I design a self-directed onboarding plan with clear milestones, a mentor pairing, weekly reflection prompts, and space for them to suggest improvements to the process.", score:4, note:"Excellent — autonomy, mentorship, reflection, and empowerment in one design." },
+      { label:"I assign a buddy and hold daily check-ins for the first month to ensure they don't feel lost.", score:2, note:"Supportive but structured around dependence, not coaching or self-direction." },
+      { label:"I give them a structured 30-60-90 day plan with defined deliverables and regular manager reviews.", score:2, note:"Useful framework but command-oriented — doesn't reflect the coaching preference." },
+      { label:"I have them shadow senior team members for two weeks and then gradually give them independent projects.", score:3, note:"Good — observational learning and autonomy progression; could include more co-created elements." }
+    ]
+  },
+  {
+    id:14, dim:'mo', type:'Behavioral',
+    text:"Describe a situation where you had to lead a team through a difficult economic downturn. How did you maintain morale and operational efficiency?",
+    options:[
+      { label:"I was transparent about the business reality, co-developed a leaner plan with the team, celebrated every efficiency win, and maintained a 'team first' communication posture throughout.", score:4, note:"Resilient, transparent, and collaborative leadership during adversity." },
+      { label:"I shielded the team from the bad news as much as possible and focused on keeping them heads-down on their work.", score:1, note:"Protective intent but low trust and motivation outcome — people sense uncertainty." },
+      { label:"I called a town hall, shared the situation honestly, and then focused on what we could control together.", score:3, note:"Good — transparency and collective agency; slightly less structured than the best answer." },
+      { label:"I reduced scope aggressively to maintain quality and protect the team from overwork.", score:2, note:"Practical but reactive — operational focus without addressing the emotional dimension." }
+    ]
+  },
+  {
+    id:15, dim:'mo', type:'Situational',
+    text:"A highly capable employee seems disengaged. Knowing that lack of growth opportunity is a primary reason people leave, how do you reignite their intrinsic motivation?",
+    options:[
+      { label:"I have a direct conversation, ask what excites them about their work and what doesn't, and co-create a development plan that connects their ambitions to current opportunities.", score:4, note:"Best practice — curiosity-led, growth-focused, and co-created." },
+      { label:"I assign them a more complex project to challenge them and see if performance improves.", score:2, note:"Assumes challenge alone is the issue — skips the diagnostic conversation." },
+      { label:"I discuss their career goals and explore internal mobility or a secondment opportunity.", score:3, note:"Good — proactive and growth-focused; strongest with prior exploration of their specific 'why'." },
+      { label:"I mention in their review that their engagement seems to have dropped and ask if everything is okay.", score:1, note:"Too passive and reactive — waiting for a formal review delays a timely intervention." }
+    ]
+  },
+
+  // ── EMPATHY (Q16–20) ──
+  {
+    id:16, dim:'em', type:'Situational',
+    text:"You have to let an employee go. How do you approach the conversation to ensure you provide genuine emotional support?",
+    options:[
+      { label:"I prepare by acknowledging the human impact, open the conversation with the person's strengths, deliver the decision clearly and compassionately, offer resources, and check on them afterward.", score:4, note:"Exemplary — dignified, compassionate, and complete emotional support." },
+      { label:"I follow the HR protocol closely, keep it brief, and refer them to the EAP program.", score:2, note:"Procedurally safe but emotionally minimal — lacks genuine presence." },
+      { label:"I deliver the news clearly, acknowledge it is difficult, and offer to provide a reference or assist with their transition.", score:3, note:"Good — respectful and supportive; slightly less emotionally rich than the best answer." },
+      { label:"I avoid lingering on the conversation to reduce their distress — I keep it quick so they can start processing.", score:1, note:"Low empathy — confuses brevity with kindness; removes the person's dignity." }
+    ]
+  },
+  {
+    id:17, dim:'em', type:'Behavioral',
+    text:"Tell me about a time you used empathy to deeply understand a customer's or user's pain points. How did that insight improve what you delivered?",
+    options:[
+      { label:"I embedded myself in their environment for a day, observed frustrations they couldn't articulate, and redesigned our solution around an emotional insight — not just a functional one.", score:4, note:"Deep empathy — moves beyond stated needs to felt experience, driving real innovation." },
+      { label:"I analysed customer support tickets and NPS scores to identify pain patterns and prioritised the top complaints.", score:2, note:"Data-driven but lacks human empathy — emotional insight is absent." },
+      { label:"I conducted user interviews with structured questions and incorporated the most common themes into our roadmap.", score:3, note:"Good — direct engagement; even stronger when probing for emotions, not just opinions." },
+      { label:"I shared customer feedback with my team and we brainstormed improvements together.", score:2, note:"Collaborative but reactive — the empathetic act was not led by the individual directly." }
+    ]
+  },
+  {
+    id:18, dim:'em', type:'Situational',
+    text:"A team member confides in you that they are experiencing severe personal challenges including medical issues and financial strain. How do you respond?",
+    options:[
+      { label:"I listen fully without jumping to solutions, thank them for trusting me, connect them to available support (EAP, HR), and work with them on a temporary workload adjustment — keeping it confidential.", score:4, note:"Excellent — full presence, practical support, and confidentiality respected." },
+      { label:"I tell them their personal issues shouldn't affect their work and offer to escalate to HR if needed.", score:1, note:"Dismissive — zero empathy and likely to damage psychological safety." },
+      { label:"I listen empathetically and encourage them to take leave if needed, reassuring them their role is secure.", score:3, note:"Good — emotionally supportive; even stronger with concrete resource signposting." },
+      { label:"I refer them to HR immediately and check in the following week to see how things are going.", score:2, note:"Practical but feels transactional — bypasses the direct empathetic relationship." }
+    ]
+  },
+  {
+    id:19, dim:'em', type:'Behavioral',
+    text:"Describe a time you created a culture of psychological safety for your team. How did you ensure people felt safe to share ideas without fear of judgment?",
+    options:[
+      { label:"I modelled vulnerability first — sharing my own failures in retrospectives, explicitly saying 'no bad ideas', and rewarding brave suggestions even when they didn't work out.", score:4, note:"Best practice — psychological safety starts with leader vulnerability and consistent reinforcement." },
+      { label:"I told the team at the start of every project that all ideas are welcome and I mean it.", score:2, note:"Intent is positive but verbal statements alone don't build psychological safety — behaviours do." },
+      { label:"I held anonymous idea submissions in retrospectives so people felt safe contributing without attribution.", score:3, note:"Good structural solution; even stronger if combined with visible modelling of openness." },
+      { label:"I praised team members publicly whenever they shared unconventional ideas.", score:3, note:"Good — recognition reinforces safety; works best alongside leader vulnerability." }
+    ]
+  },
+  {
+    id:20, dim:'em', type:'Situational',
+    text:"A young employee approaches you emotionally about concerns regarding their career path. How do you apply a coaching mindset to listen without immediately trying to 'fix' it?",
+    options:[
+      { label:"I use active listening — reflecting back what I hear, asking open questions like 'What does success look like for you?', and resisting the urge to offer advice until they feel fully heard.", score:4, note:"Textbook empathetic coaching — prioritises being heard over being helped." },
+      { label:"I share my own career journey and give them specific advice on what I did in a similar situation.", score:2, note:"Relatable but advice-first — doesn't honour their emotional need to be heard first." },
+      { label:"I acknowledge their feelings, then walk them through the company's career progression framework.", score:2, note:"Efficient but solution-focused too early — the framework feels deflecting." },
+      { label:"I listen carefully, validate their feelings, and then ask: 'What would feel like a good outcome from this conversation?'", score:3, note:"Good — validating and purposeful; just slightly less exploratory than the best answer." }
+    ]
+  },
+
+  // ── SOCIAL SKILLS (Q21–25) ──
+  {
+    id:21, dim:'ss', type:'Situational',
+    text:"Two of your team members are engaged in a heated conflict. How do you use your social skills to turn it into a constructive dialogue?",
+    options:[
+      { label:"I meet each person privately first to hear their perspective without judgment, then facilitate a joint conversation with agreed ground rules — framing it as 'both of you care, let's align on how'.", score:4, note:"Expert facilitation — private preparation prevents defensive posturing in the joint session." },
+      { label:"I call a team meeting to address the conflict publicly so everyone understands the resolution.", score:1, note:"Public exposure of conflict typically escalates it — low social intelligence." },
+      { label:"I tell both parties to resolve it between themselves and come to me only if it escalates.", score:1, note:"Avoidance — abdicates leadership responsibility for team dynamics." },
+      { label:"I speak to both of them together and ask them to share their perspectives in turn while I moderate.", score:3, note:"Good — structured and present; slightly less effective without the individual pre-conversations." }
+    ]
+  },
+  {
+    id:22, dim:'ss', type:'Behavioral',
+    text:"Describe a time you built a strong, trusting relationship with a difficult client or stakeholder. How did you adapt to build long-term partnership?",
+    options:[
+      { label:"I invested time understanding what they cared about most beyond the contract — their reputation, their pressures — and consistently acted in ways that protected those interests, not just ours.", score:4, note:"High social intelligence — relationships built on understanding felt interests, not stated ones." },
+      { label:"I over-delivered on the first milestone to earn their trust and prove we were reliable.", score:2, note:"Good execution but trust built transactionally — doesn't model deep relationship skills." },
+      { label:"I was consistent, communicated proactively even when news was bad, and always followed through on commitments.", score:3, note:"Very good — reliability and transparency build trust; even stronger with emotional intelligence layered in." },
+      { label:"I invited them to regular social touchpoints — team lunches and casual calls — to build rapport outside formal meetings.", score:3, note:"Good relationship-building; best when paired with a genuine understanding of their priorities." }
+    ]
+  },
+  {
+    id:23, dim:'ss', type:'Situational',
+    text:"You are leading a diverse, globally distributed team. What specific initiatives would you implement to foster inclusive leadership and team cohesion?",
+    options:[
+      { label:"I create rituals that rotate cultural spotlights, set communication norms that account for time zones and language differences, actively name and correct dominant voices, and make space for cultural context in decisions.", score:4, note:"Comprehensive — structural, cultural, and behavioral inclusion embedded in team practice." },
+      { label:"I hold a team-building offsite once a year to build personal bonds.", score:1, note:"One-off, in-person event doesn't address the structural inclusion needs of distributed diversity." },
+      { label:"I use a team charter to agree on communication norms and values at the start of each project.", score:3, note:"Good foundation — shared norms reduce misalignment; even stronger with ongoing cultural inclusion practices." },
+      { label:"I make sure all voices are heard in meetings by explicitly inviting quieter team members to contribute.", score:2, note:"Good intent but limited to in-meeting moments — inclusion needs structural, ongoing commitment." }
+    ]
+  },
+  {
+    id:24, dim:'ss', type:'Behavioral',
+    text:"Tell me about a time you empowered your team with decision-making authority. How did giving up control improve collaboration?",
+    options:[
+      { label:"I handed full ownership of a product feature to a junior team member, gave them access to stakeholders directly, and deliberately stepped back — only coaching when asked. The team's creativity surpassed what I would have designed.", score:4, note:"Genuine empowerment — trust, access, and restraint are all present." },
+      { label:"I asked the team to vote on the approach and went with the majority decision.", score:2, note:"Democratic but shallow — voting isn't the same as true empowerment or ownership." },
+      { label:"I delegated decisions within defined parameters and checked in weekly to ensure quality.", score:3, note:"Good — structured delegation; slightly more directive than full empowerment." },
+      { label:"I told my team they could make decisions but stayed closely involved to catch mistakes early.", score:1, note:"Pseudo-empowerment — oversight proximity signals distrust and undermines the intent." }
+    ]
+  },
+  {
+    id:25, dim:'ss', type:'Situational',
+    text:"You notice that your department's climate has become demotivating and high-potential employees are leaving. What immediate social steps do you take?",
+    options:[
+      { label:"I run confidential stay interviews with high-potentials first, then a broader climate survey, share results transparently with the team, and co-create 3 immediate changes — demonstrating I heard them and will act.", score:4, note:"Leader-grade response — diagnostic, transparent, co-created, and action-oriented." },
+      { label:"I introduce a recognition programme and team socials to lift the mood.", score:2, note:"Surface-level fix — culture problems require diagnostic conversation, not perks." },
+      { label:"I hold a town hall to explain the company's strategy and reassure people about the future.", score:2, note:"Communication is necessary but top-down — doesn't address why people are leaving." },
+      { label:"I meet individually with the employees who seem most at risk of leaving and ask what would make them stay.", score:3, note:"Good — direct and personal; even stronger with a broader diagnostic and shared action plan." }
+    ]
+  }
+,
+
+  // ── EI & WORKPLACE EFFECTIVENESS (Q26–35) ──
+  {
+    id:26, dim:'ef', type:'Performance',
+    text:"A Hay Group study found that 92% of leaders with high EI created an energising, high-performance climate, while 78% of low-EI leaders created a demotivating one. How do you use emotional intelligence to energise your team and drive high performance?",
+    options:[
+      { label:"I actively model the energy I want — celebrating wins publicly, naming effort as well as results, and having honest 1:1s to understand what fuels each person individually.", score:4, note:"Climate-builder — emotionally attuned and individually responsive leadership." },
+      { label:"I set clear KPIs and hold the team accountable to them — performance follows structure.", score:2, note:"Outcome-focused but neglects the emotional climate that sustains performance." },
+      { label:"I check in with team morale regularly and adjust workload or recognition when I sense disengagement.", score:3, note:"Good — responsive to emotional signals; even stronger when proactive rather than reactive." },
+      { label:"I push the team harder during tough periods — pressure brings out the best in people.", score:1, note:"Likely to create fear-based performance — erodes trust and climate over time." }
+    ]
+  },
+  {
+    id:27, dim:'ef', type:'Performance',
+    text:"Companies like Google and Microsoft linked EI directly to product success — Teams and Workspace were shaped by emotionally intelligent, collaborative teams. Describe a time when applying empathy and EI in your team directly improved your output or a product's success.",
+    options:[
+      { label:"I ran structured empathy sessions where the team 'lived in' user frustrations before designing — the resulting product had measurably higher adoption because we solved emotional, not just functional, problems.", score:4, note:"Connects EI practice directly to measurable output — the gold standard." },
+      { label:"I ensured there was no tension in the team during the sprint so people could focus — output improved.", score:2, note:"Conflict avoidance ≠ EI-driven performance; the connection to output is indirect." },
+      { label:"I encouraged open feedback loops between team members, which led to fewer rework cycles and faster delivery.", score:3, note:"Good — psychological safety improving efficiency is a clear EI-to-output link." },
+      { label:"I don't directly link my EI to output — those are separate things for me.", score:1, note:"Disconnects EI from professional effectiveness — misses the core principle." }
+    ]
+  },
+  {
+    id:28, dim:'ef', type:'Performance',
+    text:"Zappos achieved over 90% customer satisfaction and exceeded revenue targets by training employees to deliver empathetic service. How have you empowered your team to use EI to improve customer loyalty or business performance?",
+    options:[
+      { label:"I trained my team to listen for emotional cues in customer conversations — not just complaints — and respond to the feeling before the issue. Our NPS scores improved by double digits.", score:4, note:"Exemplary — EI embedded in customer practice with measurable outcome." },
+      { label:"I told the team that customers always come first and to be polite and responsive.", score:1, note:"Generic instruction — no EI framework, no empowerment, no measurable impact." },
+      { label:"I gave the team autonomy to resolve customer issues without escalating every decision — trust improved their confidence and customer experience.", score:3, note:"Good — empowerment and trust are EI drivers; stronger when tied to emotional attunement explicitly." },
+      { label:"I reviewed customer feedback monthly with the team and adjusted our service approach based on patterns.", score:2, note:"Data-responsive but not emotionally intelligent by design — reactive rather than proactive." }
+    ]
+  },
+  {
+    id:29, dim:'ef', type:'Teamwork',
+    text:"Microsoft's 'One Microsoft' program used EI to bridge cultural and organisational gaps across divisions. How do you leverage EI to foster cohesion and trust when leading diverse or cross-functional groups?",
+    options:[
+      { label:"I start every cross-functional engagement with a shared context session — making sure each group understands the others' pressures, priorities, and working styles before tackling the task.", score:4, note:"EI applied structurally to build mutual understanding before collaboration — highly effective." },
+      { label:"I focus on the shared goal and remind everyone that the work is what matters, not team politics.", score:1, note:"Task-only framing dismisses the relational dynamics that actually determine cross-functional success." },
+      { label:"I build in regular informal touchpoints — coffee chats, social channels — to build relationships across groups.", score:3, note:"Good — relational investment matters; even stronger when paired with structured empathy for each group's context." },
+      { label:"I clarify roles and responsibilities upfront so there's no confusion about who owns what.", score:2, note:"Useful operationally but doesn't address the emotional or relational dimension of cross-functional work." }
+    ]
+  },
+  {
+    id:30, dim:'ef', type:'Teamwork',
+    text:"The 'Best Boss vs. Worst Boss' research shows that emotionally intelligent leaders empower their teams and share credit, while low-EI leaders hoard information and take credit for others' work. How do you ensure your team feels valued and recognised during collaborative projects?",
+    options:[
+      { label:"I attribute contributions publicly and specifically — naming who did what and why it mattered — and I actively redirect external praise back to the team that earned it.", score:4, note:"High social awareness — models recognition as a habit and a leadership discipline." },
+      { label:"I tell my team they did a good job at the end of projects.", score:2, note:"Minimal recognition — post-hoc and non-specific; doesn't build sustained team self-worth." },
+      { label:"I include team contributions in reports and presentations so stakeholders see who is doing the work.", score:3, note:"Good — visibility of contribution is valuable; even stronger with real-time, specific verbal recognition." },
+      { label:"I make sure people know I appreciate them, even if I don't always say it explicitly.", score:1, note:"Unexpressed appreciation has no impact on team motivation or psychological safety." }
+    ]
+  },
+  {
+    id:31, dim:'ef', type:'Leadership',
+    text:"Gen Z workers actively seek leaders who 'coach, not command' — they want continuous mentorship and powerful questions, not metric dictation. How do you adapt your leadership style to focus on mentorship and coaching?",
+    options:[
+      { label:"I replaced my default 'here's what to do' with 'what do you think we should do?' — and I invest 30% of 1:1 time in career development conversations, not just task updates.", score:4, note:"Deliberate and structural shift to coaching — demonstrates real adaptation of leadership style." },
+      { label:"I give team members autonomy to work however they like and trust them to deliver.", score:2, note:"Autonomy without coaching is abandonment — lacks the developmental relationship." },
+      { label:"I have monthly development conversations and ask my team what skills they want to build.", score:3, note:"Good — intentional development focus; stronger when coaching is embedded in daily interactions." },
+      { label:"I share my own experiences and lessons as much as possible so the team can learn from me.", score:1, note:"Leader-centric — mentoring should primarily pull out the mentee's thinking, not broadcast the mentor's." }
+    ]
+  },
+  {
+    id:32, dim:'ef', type:'Leadership',
+    text:"The incoming workforce equates EI with psychological safety — they want feelings acknowledged, not avoided, and a culture like Pixar's where creative risk-taking is celebrated. What specific actions do you take to build this culture?",
+    options:[
+      { label:"I explicitly name and reward brave ideas — even failed ones. I share my own creative failures in team forums and have established a 'no mockery' norm in all ideation sessions.", score:4, note:"Psychological safety built through consistent leader behaviour, not just stated values." },
+      { label:"I run regular retrospectives where the team can raise concerns anonymously.", score:3, note:"Good structural mechanism — even stronger when paired with visible leader vulnerability." },
+      { label:"I keep an open-door policy so anyone can come to me if they feel unsafe.", score:2, note:"Reactive rather than proactive — psychological safety needs active cultivation, not just access." },
+      { label:"I avoid giving harsh criticism so people don't feel attacked when they share ideas.", score:1, note:"Avoiding negativity ≠ creating safety — what's absent is as important as what's present." }
+    ]
+  },
+  {
+    id:33, dim:'ef', type:'Leadership',
+    text:"When delivering terrible news — like a sudden layoff — an emotionally intelligent manager preserves an employee's self-worth and provides resources, while a low-EI manager is blunt and dismissive. Share an experience where you had to lead someone through a severe setback while maintaining empathy.",
+    options:[
+      { label:"I acknowledged the shock first, sat with them in the discomfort without rushing to solutions, validated their reaction as completely reasonable, and then carefully walked through the support available — following up personally days later.", score:4, note:"Full-spectrum empathetic support — presence, validation, practical help, and follow-through." },
+      { label:"I delivered the message clearly and professionally and gave them all the relevant HR information.", score:2, note:"Professional but emotionally absent — the person's experience is managed, not supported." },
+      { label:"I expressed genuine care, acknowledged how hard the news was, and made myself available for follow-up conversations.", score:3, note:"Good — warm and present; even stronger with immediate practical support and a follow-up plan." },
+      { label:"I focused on helping them see the situation positively — every setback is an opportunity to grow.", score:1, note:"Toxic positivity — overrides the person's legitimate emotional response with reframing they didn't ask for." }
+    ]
+  },
+  {
+    id:34, dim:'ef', type:'Conflict',
+    text:"76% of younger workers turn to AI tools to gauge the tone of sensitive messages because they feel unsafe. How do you normalise 'real talk' and mediate conflict on your team to make human-to-human resolution feel safe?",
+    options:[
+      { label:"I model vulnerability in conflict myself — naming when I feel tension, speaking first, and showing that honest conversations don't end in punishment. I also establish explicit team norms about how disagreement is expressed.", score:4, note:"Leader modelling is the most powerful tool for normalising safe conflict — structural and behavioural." },
+      { label:"I encourage people to talk directly to each other when there's a problem rather than coming to me first.", score:2, note:"Directness is good but without a safety framework it may feel risky — leader is still needed to hold the space." },
+      { label:"I facilitate conflict conversations myself, ensuring both parties feel heard before any resolution is reached.", score:3, note:"Good — active mediation creates safety; even stronger when building team capacity to self-resolve." },
+      { label:"I remind the team that conflict is normal and they should handle disagreements maturely.", score:1, note:"Directive without support — normalising the concept doesn't create the emotional safety to act on it." }
+    ]
+  },
+  {
+    id:35, dim:'ef', type:'Conflict',
+    text:"Google introduced EI training specifically to improve leaders' empathy and conflict resolution skills. Tell me about a time your team faced internal friction or competing agendas — how did you use emotional self-control and social awareness to de-escalate and guide them to resolution?",
+    options:[
+      { label:"I separated the people from the positions — helping each party articulate the need underneath their stance, then rebuilt the conversation around shared interests rather than opposing demands.", score:4, note:"Advanced conflict resolution — interest-based, emotionally regulated, and outcome-focused." },
+      { label:"I stepped in firmly and told both parties to drop the friction and focus on the project goals.", score:1, note:"Authority-based suppression — unresolved emotion resurfaces; doesn't build the team's capacity for resolution." },
+      { label:"I stayed calm, acknowledged both perspectives explicitly, and redirected the energy toward a joint problem-solving session.", score:3, note:"Good — regulated, empathetic, and constructive; even stronger with deeper interest-exploration." },
+      { label:"I gave it time — most team conflicts resolve themselves if you don't escalate them.", score:1, note:"Avoidance — unmediated friction compounds, especially in team environments." }
+    ]
+  }
+];
+
+const DIMENSIONS = {
+  sa: { name: 'Self-Awareness',   color: '#4f9cf9', icon: '🔵', maxQ: 5 },
+  sr: { name: 'Self-Regulation',  color: '#a78bfa', icon: '🟣', maxQ: 5 },
+  mo: { name: 'Motivation',       color: '#34d399', icon: '🟢', maxQ: 5 },
+  em: { name: 'Empathy',          color: '#fbbf24', icon: '🟡', maxQ: 5 },
+  ss: { name: 'Social Skills',    color: '#f87171', icon: '🔴', maxQ: 5 },
+  ef: { name: 'EI–Effectiveness', color: '#818cf8', icon: '🔷', maxQ: 10 },
+};
+
+const SECTIONS = [
+  { key:'sa', label:'Part 1: Self-Awareness',  desc:'Recognising your own emotions, values, and impact.', qs:[1,2,3,4,5] },
+  { key:'sr', label:'Part 2: Self-Regulation', desc:'Managing your emotional responses under pressure.', qs:[6,7,8,9,10] },
+  { key:'mo', label:'Part 3: Motivation',      desc:'What drives you beyond external reward?', qs:[11,12,13,14,15] },
+  { key:'em', label:'Part 4: Empathy',         desc:'Tuning into others\' emotional realities.', qs:[16,17,18,19,20] },
+  { key:'ss', label:'Part 5: Social Skills',   desc:'Navigating complex social and team dynamics.', qs:[21,22,23,24,25] },
+  { key:'ef', label:'Part 6: EI & Workplace Effectiveness', desc:'How does your EI translate to performance, leadership, teamwork, and conflict resolution?', qs:[26,27,28,29,30,31,32,33,34,35] },
+];
+
+/* ══════════════ STATE ══════════════ */
+let answers = {}; // { questionId: score }
+let currentSection = 0;
+
+/* ══════════════ NAVIGATION ══════════════ */
+function startAssessment() {
+  document.getElementById('landing').style.display = 'none';
+  document.getElementById('assessment').style.display = 'block';
+  currentSection = 0;
+  renderSection();
+}
+
+function renderSection() {
+  const sec = SECTIONS[currentSection];
+  const dim = DIMENSIONS[sec.key];
+  const container = document.getElementById('questionContainer');
+
+  let answeredTotal = Object.keys(answers).length;
+  let totalQ = QUESTIONS.length;
+  document.getElementById('progressLabel').textContent = `Section ${currentSection+1} of ${SECTIONS.length}`;
+  document.getElementById('progressFrac').textContent = `${answeredTotal} / ${totalQ} answered`;
+  document.getElementById('progressFill').style.width = `${(answeredTotal/totalQ)*100}%`;
+  document.getElementById('backBtn').disabled = currentSection === 0;
+
+  const sectionQs = QUESTIONS.filter(q => sec.qs.includes(q.id));
+
+  let html = `
+    <div class="section-header fade-in">
+      <div class="section-icon" style="background:${dim.color}20; color:${dim.color}">${dim.icon}</div>
+      <div>
+        <div class="section-title">${sec.label}</div>
+        <div class="section-desc">${sec.desc}</div>
+      </div>
+    </div>
+  `;
+
+  sectionQs.forEach((q, idx) => {
+    const isAnswered = answers[q.id] !== undefined;
+    // Shuffle options order (deterministic per question)
+    const optIndices = [0,1,2,3];
+    html += `
+      <div class="question-card fade-in ${isAnswered?'answered':''}" id="qcard-${q.id}" style="animation-delay:${idx*0.06}s">
+        <div class="question-num">Q${q.id} · ${dim.name} · <span class="q-type-tag tag-${q.type}">${q.type}</span></div>
+        <div class="question-text">${q.text}</div>
+        <div class="mcq-options">
+          ${optIndices.map(oi => {
+            const opt = q.options[oi];
+            const isSelected = answers[q.id] && answers[q.id].optIdx === oi;
+            const isRevealed = answers[q.id] !== undefined;
+            let stateClass = isSelected ? 'selected' : '';
+            if (isRevealed && isSelected) {
+              stateClass += opt.score === 4 ? ' correct' : opt.score === 3 ? ' partial' : opt.score === 2 ? ' low' : ' wrong';
+            }
+            return `
+              <button class="mcq-btn ${stateClass}" onclick="selectMCQ(${q.id}, ${oi})" ${isRevealed && !isSelected ? 'disabled' : ''}>
+                <div class="mcq-letter">${String.fromCharCode(65+oi)}</div>
+                <div class="mcq-content">
+                  <div class="mcq-label">${opt.label}</div>
+                  ${isRevealed && isSelected ? `<div class="mcq-feedback">${getScoreIcon(opt.score)} <em>${opt.note}</em></div>` : ''}
+                </div>
+                ${isRevealed && isSelected ? `<div class="mcq-score-badge score-${opt.score}">${opt.score}/4</div>` : ''}
+              </button>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  updateNextBtn();
+}
+
+function getScoreIcon(score) {
+  if (score === 4) return '✦ Best response';
+  if (score === 3) return '✔ Good response';
+  if (score === 2) return '△ Partial response';
+  return '✗ Low EI response';
+}
+
+function selectMCQ(qId, optIdx) {
+  const q = QUESTIONS.find(x => x.id === qId);
+  if (!q || answers[qId] !== undefined) return;
+  answers[qId] = { optIdx, score: q.options[optIdx].score };
+
+  // Re-render the card to show feedback
+  const sec = SECTIONS[currentSection];
+  const dim = DIMENSIONS[sec.key];
+  const card = document.getElementById(`qcard-${qId}`);
+  card.classList.add('answered');
+
+  const optIndices = [0,1,2,3];
+  card.querySelector('.mcq-options').innerHTML = optIndices.map(oi => {
+    const opt = q.options[oi];
+    const isSelected = oi === optIdx;
+    let stateClass = isSelected ? 'selected' : 'faded';
+    if (isSelected) {
+      stateClass += opt.score === 4 ? ' correct' : opt.score === 3 ? ' partial' : opt.score === 2 ? ' low' : ' wrong';
+    }
+    return `
+      <button class="mcq-btn ${stateClass}" disabled>
+        <div class="mcq-letter">${String.fromCharCode(65+oi)}</div>
+        <div class="mcq-content">
+          <div class="mcq-label">${opt.label}</div>
+          ${isSelected ? `<div class="mcq-feedback">${getScoreIcon(opt.score)} <em>${opt.note}</em></div>` : ''}
+        </div>
+        ${isSelected ? `<div class="mcq-score-badge score-${opt.score}">${opt.score}/4</div>` : ''}
+      </button>
+    `;
+  }).join('');
+
+  updateNextBtn();
+  let answeredTotal = Object.keys(answers).length;
+  document.getElementById('progressFrac').textContent = `${answeredTotal} / ${QUESTIONS.length} answered`;
+  document.getElementById('progressFill').style.width = `${(answeredTotal/QUESTIONS.length)*100}%`;
+}
+
+function updateNextBtn() {
+  const sec = SECTIONS[currentSection];
+  const allAnswered = sec.qs.every(id => answers[id] !== undefined);
+  const btn = document.getElementById('nextBtn');
+  btn.disabled = !allAnswered;
+  btn.textContent = currentSection === SECTIONS.length-1 ? 'View Results ✦' : 'Next →';
+}
+
+function goNext() {
+  if (currentSection < SECTIONS.length-1) {
+    currentSection++;
+    renderSection();
+  } else {
+    showResults();
+  }
+}
+
+function goBack() {
+  if (currentSection > 0) {
+    currentSection--;
+    renderSection();
+  }
+}
+
+/* ══════════════ RESULTS ══════════════ */
+function calcScores() {
+  let scores = {};
+  for (let key of Object.keys(DIMENSIONS)) {
+    const qs = QUESTIONS.filter(q => q.dim === key);
+    scores[key] = qs.reduce((sum, q) => sum + (answers[q.id] ? answers[q.id].score : 0), 0);
+  }
+  scores._total = Object.values(scores).filter((v,k) => typeof v === 'number').reduce((a,b) => a+b, 0);
+  return scores;
+}
+
+function getTier(total) {
+  if (total >= 112) return 'high';
+  if (total >= 77) return 'moderate';
+  return 'low';
+}
+
+const TIER_DATA = {
+  high: {
+    label: '🌟 High EI',
+    title: 'Emotionally Intelligent Leader',
+    tagline: 'You demonstrate strong emotional intelligence across all dimensions. Your self-awareness, regulation, and social fluency position you as a collaborative anchor and potential leader in high-pressure, cross-functional environments.',
+    hr: 'Strong candidate for leadership tracks, mentorship roles, and high-autonomy projects.',
+    training: 'Focus on advanced coaching skills, cross-cultural EI, and sustaining EI under executive-level pressure.',
+    self: 'Consider becoming a peer mentor. Journal to maintain emotional clarity during growth phases.',
+    actions: [
+      'Volunteer to facilitate retrospectives or difficult team conversations.',
+      'Mentor a peer who scores lower in dimensions where you excel.',
+      'Explore advanced EI frameworks: Mayer-Salovey-Caruso or Reuven Bar-On models.',
+      'Apply your EI to navigate AI-adoption challenges in your team.',
+      'Seek 360-degree feedback to identify blind spots invisible to self-report.',
+    ]
+  },
+  moderate: {
+    label: '⚡ Moderate EI',
+    title: 'Growing EI Practitioner',
+    tagline: 'You have a solid emotional foundation with clear areas for growth. Targeted development in your lower-scoring dimensions will significantly improve your effectiveness in teamwork, leadership readiness, and conflict situations.',
+    hr: 'Consider for stretch assignments with coaching support. Pair with high-EI mentors.',
+    training: 'Enroll in dimension-specific workshops: e.g., empathy training, self-regulation under stress.',
+    self: 'Use a daily emotional check-in practice and a post-meeting reflection log.',
+    actions: [
+      'Identify your 2 lowest-scoring dimensions and focus on one behavioral change each.',
+      'Practice the "pause and reframe" technique before responding in tense moments.',
+      'Read: Daniel Goleman\'s "Emotional Intelligence" or Brené Brown\'s "Dare to Lead".',
+      'Request regular feedback from teammates on your interpersonal impact.',
+      'Use AI coaching tools (e.g., Personos) to practice difficult workplace conversations.',
+    ]
+  },
+  low: {
+    label: '🔧 Developing EI',
+    title: 'EI Development Opportunity',
+    tagline: 'Your assessment suggests meaningful room for EI growth. This is a starting point, not a ceiling. With structured support and intentional practice, EI skills are learnable and can transform your workplace relationships and performance.',
+    hr: 'Recommend structured EI coaching, psychometric follow-up, and regular 1:1 check-ins.',
+    training: 'Begin with foundational EI literacy: Goleman\'s 5-domain framework, active listening, non-violent communication (NVC).',
+    self: 'Start small: identify one emotion per day and its trigger. Consider speaking with a workplace counselor.',
+    actions: [
+      'Complete a foundational EI course (Coursera, Yale "Science of Well-Being").',
+      'Practice naming emotions with specificity — replace "I\'m stressed" with the precise feeling.',
+      'Find a trusted mentor or peer who demonstrates the EI behaviors you want to develop.',
+      'Focus on one dimension at a time: start with Self-Awareness as the foundation.',
+      'Be patient and compassionate with yourself — EI development is a lifelong process.',
+    ]
+  }
+};
+
+function showResults() {
+  document.getElementById('assessment').style.display = 'none';
+  document.getElementById('results').style.display = 'block';
+  window.scrollTo({ top: 0 });
+
+  const scores = calcScores();
+  const tier = getTier(scores._total);
+  const tierInfo = TIER_DATA[tier];
+
+  // Score ring
+  const pct = scores._total / 140;
+  const circ = 2 * Math.PI * 58;
+  document.getElementById('totalScoreNum').textContent = scores._total;
+  setTimeout(() => {
+    document.getElementById('scoreArc').style.strokeDashoffset = circ * (1 - pct);
+  }, 100);
+
+  // Tier
+  const badge = document.getElementById('tierBadge');
+  badge.textContent = tierInfo.label;
+  badge.className = `tier-badge tier-${tier}`;
+  document.getElementById('resultsTitle').textContent = tierInfo.title;
+  document.getElementById('resultsTagline').textContent = tierInfo.tagline;
+
+  // Dimension cards
+  const dc = document.getElementById('dimCards');
+  dc.innerHTML = Object.entries(DIMENSIONS).map(([key, dim]) => {
+    const score = scores[key];
+    const maxScore = dim.maxQ * 4;
+    const pct = Math.round((score / maxScore) * 100);
+    return `
+      <div class="dim-card">
+        <div class="dim-card-head">
+          <div class="dim-card-name">
+            <div style="width:10px;height:10px;border-radius:50%;background:${dim.color};flex-shrink:0"></div>
+            ${dim.name}
+          </div>
+          <div class="dim-card-score" style="color:${dim.color}">${score}</div>
+        </div>
+        <div class="dim-bar-bg">
+          <div class="dim-bar-fill" id="bar-${key}" style="width:0%;background:${dim.color}"></div>
+        </div>
+        <div class="dim-card-max">${pct}% — max ${maxScore}</div>
+      </div>
+    `;
+  }).join('');
+  setTimeout(() => {
+    Object.keys(DIMENSIONS).forEach(key => {
+      const maxScore = DIMENSIONS[key].maxQ * 4;
+      const pct = (scores[key] / maxScore) * 100;
+      const bar = document.getElementById(`bar-${key}`);
+      if (bar) bar.style.width = pct + '%';
+    });
+  }, 200);
+
+  // Radar
+  setTimeout(() => drawRadar(scores), 400);
+
+  // Interpretation
+  document.getElementById('interpGrid').innerHTML = `
+    <div class="interp-card" style="border-color:var(--accent1)">
+      <h4>🏢 HR Decisions</h4>
+      <p>${tierInfo.hr}</p>
+    </div>
+    <div class="interp-card" style="border-color:var(--accent2)">
+      <h4>📚 Training Needs</h4>
+      <p>${tierInfo.training}</p>
+    </div>
+    <div class="interp-card" style="border-color:var(--accent3)">
+      <h4>🙋 Self-Improvement</h4>
+      <p>${tierInfo.self}</p>
+    </div>
+  `;
+  document.getElementById('actionItems').innerHTML = `
+    <h4>✦ Recommended Actions</h4>
+    <ul class="action-list">
+      ${tierInfo.actions.map(a => `<li>${a}</li>`).join('')}
+    </ul>
+  `;
+}
+
+function drawRadar(scores) {
+  const canvas = document.getElementById('radarCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cx = W / 2, cy = H / 2 - 10;
+  const R = Math.min(W, H) / 2 - 48;
+
+  const dimKeys = ['sa','sr','mo','em','ss','ef'];
+  const labels = ['Self-\nAwareness','Self-\nRegulation','Motivation','Empathy','Social\nSkills','EI–\nEffectiveness'];
+  const maxScores = { sa:20, sr:20, mo:20, em:20, ss:20, ef:40 };
+  const colors = ['#4f9cf9','#a78bfa','#34d399','#fbbf24','#f87171','#818cf8'];
+  const N = dimKeys.length;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Grid rings
+  for (let r = 1; r <= 5; r++) {
+    const rad = (R * r) / 5;
+    ctx.beginPath();
+    for (let i = 0; i < N; i++) {
+      const angle = (2 * Math.PI * i) / N - Math.PI / 2;
+      const x = cx + rad * Math.cos(angle);
+      const y = cy + rad * Math.sin(angle);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Spokes
+  for (let i = 0; i < N; i++) {
+    const angle = (2 * Math.PI * i) / N - Math.PI / 2;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + R * Math.cos(angle), cy + R * Math.sin(angle));
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Data polygon
+  ctx.beginPath();
+  dimKeys.forEach((key, i) => {
+    const pct = scores[key] / maxScores[key];
+    const angle = (2 * Math.PI * i) / N - Math.PI / 2;
+    const x = cx + R * pct * Math.cos(angle);
+    const y = cy + R * pct * Math.sin(angle);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(79,156,249,0.12)';
+  ctx.fill();
+  ctx.strokeStyle = '#4f9cf9';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Dots
+  dimKeys.forEach((key, i) => {
+    const pct = scores[key] / maxScores[key];
+    const angle = (2 * Math.PI * i) / N - Math.PI / 2;
+    const x = cx + R * pct * Math.cos(angle);
+    const y = cy + R * pct * Math.sin(angle);
+    ctx.beginPath();
+    ctx.arc(x, y, 5, 0, 2 * Math.PI);
+    ctx.fillStyle = colors[i];
+    ctx.fill();
+  });
+
+  // Labels
+  ctx.font = '11px DM Sans, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  dimKeys.forEach((key, i) => {
+    const angle = (2 * Math.PI * i) / N - Math.PI / 2;
+    const lx = cx + (R + 36) * Math.cos(angle);
+    const ly = cy + (R + 36) * Math.sin(angle);
+    const lines = labels[i].split('\n');
+    lines.forEach((line, li) => {
+      ctx.fillText(line, lx, ly + (li - (lines.length-1)/2) * 14);
+    });
+  });
+}
+
+function retake() {
+  answers = {};
+  currentSection = 0;
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('landing').style.display = 'flex';
+}
+</script>
+</body>
+</html>
