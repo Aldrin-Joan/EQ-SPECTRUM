@@ -466,7 +466,7 @@
       </svg>
       <div class="score-num">
         <span class="big" id="totalScoreNum">—</span>
-        <span class="of">/ 140</span>
+        <span class="of">/ 150</span>
       </div>
     </div>
     <div class="tier-badge" id="tierBadge">—</div>
@@ -497,7 +497,8 @@
   <div class="scoring-box fade-in" style="animation-delay:0.4s">
     <h3>📐 Scoring Method</h3>
     <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6">
-      Each of the 35 questions is a behavioural or situational scenario with 4 options scored 1–4 based on EI alignment (4 = most EI-aligned, 1 = least). The 5 core dimensions (Q1–25) are worth max 20 each. The 10 EI-Effectiveness questions (Q26–35) are worth max 40. <strong style="color:var(--text)">Total max = 140.</strong>
+      Each of the 35 questions is a behavioural or situational scenario with 4 options scored 1–4 based on EI alignment (4 = most EI-aligned, 1 = least). The 5 core dimensions (Q1–25) are worth max 20 each. The 10 EI-Effectiveness questions (Q26–35) are worth max 40. <strong style="color:var(--text)">Total max = 150 (Behavioral: 100, Likert: 50).
+Final score is calculated using weighted EI model.</strong>
     </p>
     <div class="scoring-tiers">
       <div class="tier-card high">
@@ -792,108 +793,128 @@ const QUESTIONS = [
   }
 ,
 
-  // ── EI & WORKPLACE EFFECTIVENESS (Q26–35) ──
-  {
-    id:26, dim:'ef', type:'Performance',
-    text:"A Hay Group study found that 92% of leaders with high EI created an energising, high-performance climate, while 78% of low-EI leaders created a demotivating one. How do you use emotional intelligence to energise your team and drive high performance?",
-    options:[
-      { label:"I actively model the energy I want — celebrating wins publicly, naming effort as well as results, and having honest 1:1s to understand what fuels each person individually.", score:4, note:"Climate-builder — emotionally attuned and individually responsive leadership." },
-      { label:"I set clear KPIs and hold the team accountable to them — performance follows structure.", score:2, note:"Outcome-focused but neglects the emotional climate that sustains performance." },
-      { label:"I check in with team morale regularly and adjust workload or recognition when I sense disengagement.", score:3, note:"Good — responsive to emotional signals; even stronger when proactive rather than reactive." },
-      { label:"I push the team harder during tough periods — pressure brings out the best in people.", score:1, note:"Likely to create fear-based performance — erodes trust and climate over time." }
-    ]
-  },
-  {
-    id:27, dim:'ef', type:'Performance',
-    text:"Companies like Google and Microsoft linked EI directly to product success — Teams and Workspace were shaped by emotionally intelligent, collaborative teams. Describe a time when applying empathy and EI in your team directly improved your output or a product's success.",
-    options:[
-      { label:"I ran structured empathy sessions where the team 'lived in' user frustrations before designing — the resulting product had measurably higher adoption because we solved emotional, not just functional, problems.", score:4, note:"Connects EI practice directly to measurable output — the gold standard." },
-      { label:"I ensured there was no tension in the team during the sprint so people could focus — output improved.", score:2, note:"Conflict avoidance ≠ EI-driven performance; the connection to output is indirect." },
-      { label:"I encouraged open feedback loops between team members, which led to fewer rework cycles and faster delivery.", score:3, note:"Good — psychological safety improving efficiency is a clear EI-to-output link." },
-      { label:"I don't directly link my EI to output — those are separate things for me.", score:1, note:"Disconnects EI from professional effectiveness — misses the core principle." }
-    ]
-  },
-  {
-    id:28, dim:'ef', type:'Performance',
-    text:"Zappos achieved over 90% customer satisfaction and exceeded revenue targets by training employees to deliver empathetic service. How have you empowered your team to use EI to improve customer loyalty or business performance?",
-    options:[
-      { label:"I trained my team to listen for emotional cues in customer conversations — not just complaints — and respond to the feeling before the issue. Our NPS scores improved by double digits.", score:4, note:"Exemplary — EI embedded in customer practice with measurable outcome." },
-      { label:"I told the team that customers always come first and to be polite and responsive.", score:1, note:"Generic instruction — no EI framework, no empowerment, no measurable impact." },
-      { label:"I gave the team autonomy to resolve customer issues without escalating every decision — trust improved their confidence and customer experience.", score:3, note:"Good — empowerment and trust are EI drivers; stronger when tied to emotional attunement explicitly." },
-      { label:"I reviewed customer feedback monthly with the team and adjusted our service approach based on patterns.", score:2, note:"Data-responsive but not emotionally intelligent by design — reactive rather than proactive." }
-    ]
-  },
-  {
-    id:29, dim:'ef', type:'Teamwork',
-    text:"Microsoft's 'One Microsoft' program used EI to bridge cultural and organisational gaps across divisions. How do you leverage EI to foster cohesion and trust when leading diverse or cross-functional groups?",
-    options:[
-      { label:"I start every cross-functional engagement with a shared context session — making sure each group understands the others' pressures, priorities, and working styles before tackling the task.", score:4, note:"EI applied structurally to build mutual understanding before collaboration — highly effective." },
-      { label:"I focus on the shared goal and remind everyone that the work is what matters, not team politics.", score:1, note:"Task-only framing dismisses the relational dynamics that actually determine cross-functional success." },
-      { label:"I build in regular informal touchpoints — coffee chats, social channels — to build relationships across groups.", score:3, note:"Good — relational investment matters; even stronger when paired with structured empathy for each group's context." },
-      { label:"I clarify roles and responsibilities upfront so there's no confusion about who owns what.", score:2, note:"Useful operationally but doesn't address the emotional or relational dimension of cross-functional work." }
-    ]
-  },
-  {
-    id:30, dim:'ef', type:'Teamwork',
-    text:"The 'Best Boss vs. Worst Boss' research shows that emotionally intelligent leaders empower their teams and share credit, while low-EI leaders hoard information and take credit for others' work. How do you ensure your team feels valued and recognised during collaborative projects?",
-    options:[
-      { label:"I attribute contributions publicly and specifically — naming who did what and why it mattered — and I actively redirect external praise back to the team that earned it.", score:4, note:"High social awareness — models recognition as a habit and a leadership discipline." },
-      { label:"I tell my team they did a good job at the end of projects.", score:2, note:"Minimal recognition — post-hoc and non-specific; doesn't build sustained team self-worth." },
-      { label:"I include team contributions in reports and presentations so stakeholders see who is doing the work.", score:3, note:"Good — visibility of contribution is valuable; even stronger with real-time, specific verbal recognition." },
-      { label:"I make sure people know I appreciate them, even if I don't always say it explicitly.", score:1, note:"Unexpressed appreciation has no impact on team motivation or psychological safety." }
-    ]
-  },
-  {
-    id:31, dim:'ef', type:'Leadership',
-    text:"Gen Z workers actively seek leaders who 'coach, not command' — they want continuous mentorship and powerful questions, not metric dictation. How do you adapt your leadership style to focus on mentorship and coaching?",
-    options:[
-      { label:"I replaced my default 'here's what to do' with 'what do you think we should do?' — and I invest 30% of 1:1 time in career development conversations, not just task updates.", score:4, note:"Deliberate and structural shift to coaching — demonstrates real adaptation of leadership style." },
-      { label:"I give team members autonomy to work however they like and trust them to deliver.", score:2, note:"Autonomy without coaching is abandonment — lacks the developmental relationship." },
-      { label:"I have monthly development conversations and ask my team what skills they want to build.", score:3, note:"Good — intentional development focus; stronger when coaching is embedded in daily interactions." },
-      { label:"I share my own experiences and lessons as much as possible so the team can learn from me.", score:1, note:"Leader-centric — mentoring should primarily pull out the mentee's thinking, not broadcast the mentor's." }
-    ]
-  },
-  {
-    id:32, dim:'ef', type:'Leadership',
-    text:"The incoming workforce equates EI with psychological safety — they want feelings acknowledged, not avoided, and a culture like Pixar's where creative risk-taking is celebrated. What specific actions do you take to build this culture?",
-    options:[
-      { label:"I explicitly name and reward brave ideas — even failed ones. I share my own creative failures in team forums and have established a 'no mockery' norm in all ideation sessions.", score:4, note:"Psychological safety built through consistent leader behaviour, not just stated values." },
-      { label:"I run regular retrospectives where the team can raise concerns anonymously.", score:3, note:"Good structural mechanism — even stronger when paired with visible leader vulnerability." },
-      { label:"I keep an open-door policy so anyone can come to me if they feel unsafe.", score:2, note:"Reactive rather than proactive — psychological safety needs active cultivation, not just access." },
-      { label:"I avoid giving harsh criticism so people don't feel attacked when they share ideas.", score:1, note:"Avoiding negativity ≠ creating safety — what's absent is as important as what's present." }
-    ]
-  },
-  {
-    id:33, dim:'ef', type:'Leadership',
-    text:"When delivering terrible news — like a sudden layoff — an emotionally intelligent manager preserves an employee's self-worth and provides resources, while a low-EI manager is blunt and dismissive. Share an experience where you had to lead someone through a severe setback while maintaining empathy.",
-    options:[
-      { label:"I acknowledged the shock first, sat with them in the discomfort without rushing to solutions, validated their reaction as completely reasonable, and then carefully walked through the support available — following up personally days later.", score:4, note:"Full-spectrum empathetic support — presence, validation, practical help, and follow-through." },
-      { label:"I delivered the message clearly and professionally and gave them all the relevant HR information.", score:2, note:"Professional but emotionally absent — the person's experience is managed, not supported." },
-      { label:"I expressed genuine care, acknowledged how hard the news was, and made myself available for follow-up conversations.", score:3, note:"Good — warm and present; even stronger with immediate practical support and a follow-up plan." },
-      { label:"I focused on helping them see the situation positively — every setback is an opportunity to grow.", score:1, note:"Toxic positivity — overrides the person's legitimate emotional response with reframing they didn't ask for." }
-    ]
-  },
-  {
-    id:34, dim:'ef', type:'Conflict',
-    text:"76% of younger workers turn to AI tools to gauge the tone of sensitive messages because they feel unsafe. How do you normalise 'real talk' and mediate conflict on your team to make human-to-human resolution feel safe?",
-    options:[
-      { label:"I model vulnerability in conflict myself — naming when I feel tension, speaking first, and showing that honest conversations don't end in punishment. I also establish explicit team norms about how disagreement is expressed.", score:4, note:"Leader modelling is the most powerful tool for normalising safe conflict — structural and behavioural." },
-      { label:"I encourage people to talk directly to each other when there's a problem rather than coming to me first.", score:2, note:"Directness is good but without a safety framework it may feel risky — leader is still needed to hold the space." },
-      { label:"I facilitate conflict conversations myself, ensuring both parties feel heard before any resolution is reached.", score:3, note:"Good — active mediation creates safety; even stronger when building team capacity to self-resolve." },
-      { label:"I remind the team that conflict is normal and they should handle disagreements maturely.", score:1, note:"Directive without support — normalising the concept doesn't create the emotional safety to act on it." }
-    ]
-  },
-  {
-    id:35, dim:'ef', type:'Conflict',
-    text:"Google introduced EI training specifically to improve leaders' empathy and conflict resolution skills. Tell me about a time your team faced internal friction or competing agendas — how did you use emotional self-control and social awareness to de-escalate and guide them to resolution?",
-    options:[
-      { label:"I separated the people from the positions — helping each party articulate the need underneath their stance, then rebuilt the conversation around shared interests rather than opposing demands.", score:4, note:"Advanced conflict resolution — interest-based, emotionally regulated, and outcome-focused." },
-      { label:"I stepped in firmly and told both parties to drop the friction and focus on the project goals.", score:1, note:"Authority-based suppression — unresolved emotion resurfaces; doesn't build the team's capacity for resolution." },
-      { label:"I stayed calm, acknowledged both perspectives explicitly, and redirected the energy toward a joint problem-solving session.", score:3, note:"Good — regulated, empathetic, and constructive; even stronger with deeper interest-exploration." },
-      { label:"I gave it time — most team conflicts resolve themselves if you don't escalate them.", score:1, note:"Avoidance — unmediated friction compounds, especially in team environments." }
-    ]
-  }
+  // ── EI & WORKPLACE EFFECTIVENESS (Q26–35) — LIKERT ──
+{
+  id:26, dim:'ef', type:'Performance',
+  text:"I use emotional intelligence to create an energizing and high-performance work environment.",
+  options:[
+    { label:"Strongly Disagree", score:1 },
+    { label:"Disagree", score:2 },
+    { label:"Neutral", score:3 },
+    { label:"Agree", score:4 },
+    { label:"Strongly Agree", score:5 }
+  ]
+},
+{
+  id:27, dim:'ef', type:'Performance',
+  text:"I apply empathy and collaboration to improve team output and product success.",
+  options:[
+    { label:"Strongly Disagree", score:1 },
+    { label:"Disagree", score:2 },
+    { label:"Neutral", score:3 },
+    { label:"Agree", score:4 },
+    { label:"Strongly Agree", score:5 }
+  ]
+},
+{
+  id:28, dim:'ef', type:'Performance',
+  text:"I empower my team to use emotional intelligence to improve customer satisfaction and business results.",
+  options:[
+    { label:"Strongly Disagree", score:1 },
+    { label:"Disagree", score:2 },
+    { label:"Neutral", score:3 },
+    { label:"Agree", score:4 },
+    { label:"Strongly Agree", score:5 }
+  ]
+},
+{
+  id:29, dim:'ef', type:'Teamwork',
+  text:"I build trust and collaboration in diverse or cross-functional teams using emotional intelligence.",
+  options:[
+    { label:"Strongly Disagree", score:1 },
+    { label:"Disagree", score:2 },
+    { label:"Neutral", score:3 },
+    { label:"Agree", score:4 },
+    { label:"Strongly Agree", score:5 }
+  ]
+},
+{
+  id:30, dim:'ef', type:'Teamwork',
+  text:"I ensure team members feel valued and recognized for their contributions.",
+  options:[
+    { label:"Strongly Disagree", score:1 },
+    { label:"Disagree", score:2 },
+    { label:"Neutral", score:3 },
+    { label:"Agree", score:4 },
+    { label:"Strongly Agree", score:5 }
+  ]
+},
+{
+  id:31, dim:'ef', type:'Leadership',
+  text:"I adopt a coaching leadership style by listening, asking questions, and guiding rather than commanding.",
+  options:[
+    { label:"Strongly Disagree", score:1 },
+    { label:"Disagree", score:2 },
+    { label:"Neutral", score:3 },
+    { label:"Agree", score:4 },
+    { label:"Strongly Agree", score:5 }
+  ]
+},
+{
+  id:32, dim:'ef', type:'Leadership',
+  text:"I create a psychologically safe environment where people feel comfortable sharing ideas and taking risks.",
+  options:[
+    { label:"Strongly Disagree", score:1 },
+    { label:"Disagree", score:2 },
+    { label:"Neutral", score:3 },
+    { label:"Agree", score:4 },
+    { label:"Strongly Agree", score:5 }
+  ]
+},
+{
+  id:33, dim:'ef', type:'Leadership',
+  text:"I handle difficult situations with empathy, ensuring individuals feel supported and respected.",
+  options:[
+    { label:"Strongly Disagree", score:1 },
+    { label:"Disagree", score:2 },
+    { label:"Neutral", score:3 },
+    { label:"Agree", score:4 },
+    { label:"Strongly Agree", score:5 }
+  ]
+},
+{
+  id:34, dim:'ef', type:'Conflict',
+  text:"I encourage open and honest communication to resolve conflicts effectively.",
+  options:[
+    { label:"Strongly Disagree", score:1 },
+    { label:"Disagree", score:2 },
+    { label:"Neutral", score:3 },
+    { label:"Agree", score:4 },
+    { label:"Strongly Agree", score:5 }
+  ]
+},
+{
+  id:35, dim:'ef', type:'Conflict',
+  text:"I manage conflicts using emotional self-control and social awareness to reach constructive solutions.",
+  options:[
+    { label:"Strongly Disagree", score:1 },
+    { label:"Disagree", score:2 },
+    { label:"Neutral", score:3 },
+    { label:"Agree", score:4 },
+    { label:"Strongly Agree", score:5 }
+  ]
+}
 ];
+
+// Shuffle behavioral questions Options so the correct answer isn't always 'A'
+QUESTIONS.forEach(q => {
+  if (q.id <= 25) {
+    for (let i = q.options.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [q.options[i], q.options[j]] = [q.options[j], q.options[i]];
+    }
+  }
+});
 
 const DIMENSIONS = {
   sa: { name: 'Self-Awareness',   color: '#4f9cf9', icon: '🔵', maxQ: 5 },
@@ -951,8 +972,7 @@ function renderSection() {
 
   sectionQs.forEach((q, idx) => {
     const isAnswered = answers[q.id] !== undefined;
-    // Shuffle options order (deterministic per question)
-    const optIndices = [0,1,2,3];
+    const optIndices = q.options.map((_, i) => i);
     html += `
       <div class="question-card fade-in ${isAnswered?'answered':''}" id="qcard-${q.id}" style="animation-delay:${idx*0.06}s">
         <div class="question-num">Q${q.id} · ${dim.name} · <span class="q-type-tag tag-${q.type}">${q.type}</span></div>
@@ -1005,7 +1025,7 @@ function selectMCQ(qId, optIdx) {
   const card = document.getElementById(`qcard-${qId}`);
   card.classList.add('answered');
 
-  const optIndices = [0,1,2,3];
+  const optIndices = q.options.map((_, i) => i);
   card.querySelector('.mcq-options').innerHTML = optIndices.map(oi => {
     const opt = q.options[oi];
     const isSelected = oi === optIdx;
@@ -1040,11 +1060,11 @@ function updateNextBtn() {
 }
 
 function goNext() {
-  if (currentSection < SECTIONS.length-1) {
+  if (currentSection < SECTIONS.length - 1) {
     currentSection++;
     renderSection();
   } else {
-    showResults();
+    showResults(); // 🔥 critical
   }
 }
 
@@ -1056,6 +1076,21 @@ function goBack() {
 }
 
 /* ══════════════ RESULTS ══════════════ */
+
+function calculateTotalScore() {
+  let total = 0;
+  for (let key in answers) {
+    total += answers[key].score;
+  }
+  return total;
+}
+
+function getEITier(score) {
+  if (score >= 112) return "High EI";
+  if (score >= 77) return "Moderate EI";
+  return "Low EI";
+}
+
 function calcScores() {
   let scores = {};
   for (let key of Object.keys(DIMENSIONS)) {
@@ -1064,12 +1099,6 @@ function calcScores() {
   }
   scores._total = Object.values(scores).filter((v,k) => typeof v === 'number').reduce((a,b) => a+b, 0);
   return scores;
-}
-
-function getTier(total) {
-  if (total >= 112) return 'high';
-  if (total >= 77) return 'moderate';
-  return 'low';
 }
 
 const TIER_DATA = {
@@ -1121,86 +1150,99 @@ const TIER_DATA = {
 };
 
 function showResults() {
+  const totalScore = calculateTotalScore();
+  const tier = getEITier(totalScore);
+
   document.getElementById('assessment').style.display = 'none';
   document.getElementById('results').style.display = 'block';
-  window.scrollTo({ top: 0 });
 
-  const scores = calcScores();
-  const tier = getTier(scores._total);
-  const tierInfo = TIER_DATA[tier];
+  document.getElementById('totalScoreNum').textContent = totalScore;
+  document.getElementById('tierBadge').textContent = tier;
 
-  // Score ring
-  const pct = scores._total / 140;
-  const circ = 2 * Math.PI * 58;
-  document.getElementById('totalScoreNum').textContent = scores._total;
-  setTimeout(() => {
-    document.getElementById('scoreArc').style.strokeDashoffset = circ * (1 - pct);
-  }, 100);
+  let tierKey = "low";
+  if (tier === "High EI") {
+    document.getElementById('tierBadge').className = "tier-badge tier-high";
+    tierKey = "high";
+  } else if (tier === "Moderate EI") {
+    document.getElementById('tierBadge').className = "tier-badge tier-moderate";
+    tierKey = "moderate";
+  } else {
+    document.getElementById('tierBadge').className = "tier-badge tier-low";
+    tierKey = "low";
+  }
 
-  // Tier
-  const badge = document.getElementById('tierBadge');
-  badge.textContent = tierInfo.label;
-  badge.className = `tier-badge tier-${tier}`;
-  document.getElementById('resultsTitle').textContent = tierInfo.title;
-  document.getElementById('resultsTagline').textContent = tierInfo.tagline;
+  // Populate dynamic UI elements based on the tier
+  let tierData = TIER_DATA[tierKey];
+  document.getElementById('resultsTitle').textContent = tierData.title;
+  document.getElementById('resultsTagline').textContent = tierData.tagline;
 
-  // Dimension cards
-  const dc = document.getElementById('dimCards');
-  dc.innerHTML = Object.entries(DIMENSIONS).map(([key, dim]) => {
-    const score = scores[key];
-    const maxScore = dim.maxQ * 4;
-    const pct = Math.round((score / maxScore) * 100);
+  // POPULATE RESULTS DETAILS
+  let scores = calcScores();
+  
+  // DIM CARDS
+  const maxScores = { sa:20, sr:20, mo:20, em:20, ss:20, ef:40 };
+  let dimHtml = Object.keys(DIMENSIONS).map(key => {
+    let val = scores[key] || 0;
+    let max = maxScores[key];
+    let pct = (val / max) * 100;
+    let dim = DIMENSIONS[key];
     return `
       <div class="dim-card">
         <div class="dim-card-head">
-          <div class="dim-card-name">
-            <div style="width:10px;height:10px;border-radius:50%;background:${dim.color};flex-shrink:0"></div>
-            ${dim.name}
-          </div>
-          <div class="dim-card-score" style="color:${dim.color}">${score}</div>
+          <div class="dim-card-name">${dim.icon} ${dim.name}</div>
+          <div class="dim-card-score">${val}</div>
         </div>
         <div class="dim-bar-bg">
-          <div class="dim-bar-fill" id="bar-${key}" style="width:0%;background:${dim.color}"></div>
+          <div class="dim-bar-fill" style="width:${pct}%; background:${dim.color}"></div>
         </div>
-        <div class="dim-card-max">${pct}% — max ${maxScore}</div>
+        <div class="dim-card-max">Max: ${max}</div>
       </div>
     `;
   }).join('');
-  setTimeout(() => {
-    Object.keys(DIMENSIONS).forEach(key => {
-      const maxScore = DIMENSIONS[key].maxQ * 4;
-      const pct = (scores[key] / maxScore) * 100;
-      const bar = document.getElementById(`bar-${key}`);
-      if (bar) bar.style.width = pct + '%';
-    });
-  }, 200);
+  document.getElementById('dimCards').innerHTML = dimHtml;
 
-  // Radar
-  setTimeout(() => drawRadar(scores), 400);
+  // RADAR 
+  drawRadar(scores);
 
-  // Interpretation
-  document.getElementById('interpGrid').innerHTML = `
-    <div class="interp-card" style="border-color:var(--accent1)">
-      <h4>🏢 HR Decisions</h4>
-      <p>${tierInfo.hr}</p>
+  // INTERP GRID
+  let interpHtml = `
+    <div class="interp-card">
+      <h4>HR / Management View</h4>
+      <p>${tierData.hr}</p>
     </div>
-    <div class="interp-card" style="border-color:var(--accent2)">
-      <h4>📚 Training Needs</h4>
-      <p>${tierInfo.training}</p>
+    <div class="interp-card">
+      <h4>Suggested Training</h4>
+      <p>${tierData.training}</p>
     </div>
-    <div class="interp-card" style="border-color:var(--accent3)">
-      <h4>🙋 Self-Improvement</h4>
-      <p>${tierInfo.self}</p>
+    <div class="interp-card">
+      <h4>Self-Guided Practice</h4>
+      <p>${tierData.self}</p>
     </div>
   `;
-  document.getElementById('actionItems').innerHTML = `
-    <h4>✦ Recommended Actions</h4>
+  document.getElementById('interpGrid').innerHTML = interpHtml;
+
+  // ACTION ITEMS
+  let actionsHtml = `
+    <h4>Recommended Next Steps</h4>
     <ul class="action-list">
-      ${tierInfo.actions.map(a => `<li>${a}</li>`).join('')}
+      ${tierData.actions.map(act => '<li>' + act + '</li>').join('')}
     </ul>
   `;
-}
+  document.getElementById('actionItems').innerHTML = actionsHtml;
 
+  // =========================
+  // ANIMATE SCORE RING
+  // =========================
+  const circle = document.getElementById('scoreArc');
+  const circumference = 364.4;
+  const finalPercent = (totalScore / 150) * 100;
+  const offset = circumference - (finalPercent / 100) * circumference;
+
+  setTimeout(() => {
+    circle.style.strokeDashoffset = offset;
+  }, 200);
+
+}
 function drawRadar(scores) {
   const canvas = document.getElementById('radarCanvas');
   const ctx = canvas.getContext('2d');
